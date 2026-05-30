@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Article;
@@ -12,7 +14,9 @@ class ArticleController extends Controller
 
     public function show($id)
     {
-        return response()->json(Article::findOrFail($id));
+        $article = Article::findOrFail($id);
+
+        return response()->json($article);
     }
 
     public function store(Request $request)
@@ -38,7 +42,12 @@ class ArticleController extends Controller
     public function update(Request $request, $id)
     {
         $article = Article::findOrFail($id);
-        $article->update($request->all());
+
+        $article->update([
+            'judul' => $request->judul,
+            'isi_artikel' => $request->isi_artikel,
+            'gambar' => $request->gambar,
+        ]);
 
         return response()->json([
             'message' => 'Artikel berhasil diperbarui',
@@ -48,7 +57,8 @@ class ArticleController extends Controller
 
     public function destroy($id)
     {
-        Article::findOrFail($id)->delete();
+        $article = Article::findOrFail($id);
+        $article->delete();
 
         return response()->json([
             'message' => 'Artikel berhasil dihapus'

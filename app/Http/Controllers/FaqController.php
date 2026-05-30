@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Faq;
@@ -32,7 +34,11 @@ class FaqController extends Controller
     public function update(Request $request, $id)
     {
         $faq = Faq::findOrFail($id);
-        $faq->update($request->all());
+
+        $faq->update([
+            'pertanyaan' => $request->pertanyaan,
+            'jawaban' => $request->jawaban,
+        ]);
 
         return response()->json([
             'message' => 'FAQ berhasil diperbarui',
@@ -42,7 +48,8 @@ class FaqController extends Controller
 
     public function destroy($id)
     {
-        Faq::findOrFail($id)->delete();
+        $faq = Faq::findOrFail($id);
+        $faq->delete();
 
         return response()->json([
             'message' => 'FAQ berhasil dihapus'
