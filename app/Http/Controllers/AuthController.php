@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Register berhasil',
-            'data' => $user
+            'data' => $user,
         ], 201);
     }
 
@@ -44,7 +44,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Email atau password salah'
+                'message' => 'Email atau password salah',
             ], 401);
         }
 
@@ -53,16 +53,16 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login berhasil',
             'token' => $token,
-            'user' => $user
-        ]);
+            'user' => $user,
+        ], 200);
     }
 
     public function profile(Request $request)
     {
         return response()->json([
             'message' => 'Data profile berhasil diambil',
-            'user' => $request->user()
-        ]);
+            'user' => $request->user(),
+        ], 200);
     }
 
     public function logout(Request $request)
@@ -70,7 +70,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Logout berhasil'
-        ]);
+            'message' => 'Logout berhasil',
+        ], 200);
     }
 }
