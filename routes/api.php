@@ -9,6 +9,7 @@ use App\Http\Controllers\FaqController;
 
 // route ini boleh diakses tanpa login
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 // route di bawah ini butuh login/token
 Route::middleware('auth:sanctum')->group(function () {
