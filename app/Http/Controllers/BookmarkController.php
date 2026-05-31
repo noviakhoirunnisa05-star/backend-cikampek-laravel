@@ -1,15 +1,5 @@
 <?php
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<?php
-
-=======
->>>>>>> origin/main
->>>>>>> main
-=======
->>>>>>> main
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
@@ -20,37 +10,53 @@ class BookmarkController extends Controller
     public function index(Request $request)
     {
         $bookmarks = Bookmark::with('scholarship')
-            ->where('id_user', $request->user()->id_user)
+            ->where('user_id', $request->user()->id)
+            ->latest()
             ->get();
 
-        return response()->json($bookmarks);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar bookmark berhasil diambil',
+            'data' => $bookmarks,
+        ], 200);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id_scholarship' => 'required'
+            'scholarship_id' => 'required|exists:scholarships,id',
         ]);
 
         $bookmark = Bookmark::firstOrCreate([
-            'id_user' => $request->user()->id_user,
-            'id_scholarship' => $request->id_scholarship,
+            'user_id' => $request->user()->id,
+            'scholarship_id' => $request->scholarship_id,
         ]);
 
         return response()->json([
-            'message' => 'Beasiswa berhasil disimpan',
-            'data' => $bookmark
+            'success' => true,
+            'message' => 'Beasiswa berhasil ditambahkan ke bookmark',
+            'data' => $bookmark,
         ], 201);
     }
 
     public function destroy(Request $request, $id)
     {
-        Bookmark::where('id_bookmark', $id)
-            ->where('id_user', $request->user()->id_user)
-            ->delete();
+        $bookmark = Bookmark::where('user_id', $request->user()->id)
+            ->where('id', $id)
+            ->first();
+
+        if (!$bookmark) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bookmark tidak ditemukan',
+            ], 404);
+        }
+
+        $bookmark->delete();
 
         return response()->json([
-            'message' => 'Bookmark berhasil dihapus'
-        ]);
+            'success' => true,
+            'message' => 'Bookmark berhasil dihapus',
+        ], 200);
     }
 }
