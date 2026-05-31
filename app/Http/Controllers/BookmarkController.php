@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 <?php
 
-=======
->>>>>>> origin/main
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
