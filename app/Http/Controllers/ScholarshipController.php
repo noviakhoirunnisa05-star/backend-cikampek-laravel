@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Scholarship;
+=======
+<<<<<<< HEAD
+use App\Models\Scholarship;
+=======
+>>>>>>> origin/main
+>>>>>>> main
 use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> main
     public function index(Request $request)
     {
         $query = Scholarship::with('educationLevel');
@@ -82,4 +93,12 @@ class ScholarshipController extends Controller
             'message' => 'Beasiswa berhasil dihapus',
         ]);
     }
+<<<<<<< HEAD
 }
+=======
+}
+=======
+    //
+}
+>>>>>>> origin/main
+>>>>>>> main
