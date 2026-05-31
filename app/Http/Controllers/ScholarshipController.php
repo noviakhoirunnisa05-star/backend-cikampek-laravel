@@ -2,25 +2,14 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
 use App\Models\Scholarship;
-=======
-<<<<<<< HEAD
-use App\Models\Scholarship;
-=======
->>>>>>> origin/main
->>>>>>> main
 use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> main
     public function index(Request $request)
     {
-        $query = Scholarship::with('educationLevel');
+        $query = Scholarship::query();
 
         if ($request->search) {
             $query->where('nama_beasiswa', 'like', '%' . $request->search . '%');
@@ -31,10 +20,8 @@ class ScholarshipController extends Controller
                   ->where('semester_max', '>=', $request->semester);
         }
 
-        if ($request->level) {
-            $query->whereHas('educationLevel', function ($q) use ($request) {
-                $q->where('nama_level', $request->level);
-            });
+        if ($request->id_level) {
+            $query->where('id_level', $request->id_level);
         }
 
         return response()->json($query->get());
@@ -42,7 +29,7 @@ class ScholarshipController extends Controller
 
     public function show($id)
     {
-        $scholarship = Scholarship::with('educationLevel')->findOrFail($id);
+        $scholarship = Scholarship::findOrFail($id);
 
         return response()->json($scholarship);
     }
@@ -68,7 +55,7 @@ class ScholarshipController extends Controller
 
         return response()->json([
             'message' => 'Beasiswa berhasil ditambahkan',
-            'data' => $scholarship,
+            'data' => $scholarship
         ], 201);
     }
 
@@ -76,11 +63,22 @@ class ScholarshipController extends Controller
     {
         $scholarship = Scholarship::findOrFail($id);
 
-        $scholarship->update($request->all());
+        $scholarship->update([
+            'id_level' => $request->id_level,
+            'nama_beasiswa' => $request->nama_beasiswa,
+            'penyelenggara' => $request->penyelenggara,
+            'deskripsi' => $request->deskripsi,
+            'persyaratan' => $request->persyaratan,
+            'semester_min' => $request->semester_min,
+            'semester_max' => $request->semester_max,
+            'deadline' => $request->deadline,
+            'link_pendaftaran' => $request->link_pendaftaran,
+            'status' => $request->status,
+        ]);
 
         return response()->json([
             'message' => 'Beasiswa berhasil diperbarui',
-            'data' => $scholarship,
+            'data' => $scholarship
         ]);
     }
 
@@ -90,15 +88,7 @@ class ScholarshipController extends Controller
         $scholarship->delete();
 
         return response()->json([
-            'message' => 'Beasiswa berhasil dihapus',
+            'message' => 'Beasiswa berhasil dihapus'
         ]);
     }
-<<<<<<< HEAD
 }
-=======
-}
-=======
-    //
-}
->>>>>>> origin/main
->>>>>>> main
