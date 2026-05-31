@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+<?php
+
+=======
+>>>>>>> origin/main
 namespace App\Http\Controllers;
 
 use App\Models\Faq;
@@ -32,7 +37,15 @@ class FaqController extends Controller
     public function update(Request $request, $id)
     {
         $faq = Faq::findOrFail($id);
+<<<<<<< HEAD
+
+        $faq->update([
+            'pertanyaan' => $request->pertanyaan,
+            'jawaban' => $request->jawaban,
+        ]);
+=======
         $faq->update($request->all());
+>>>>>>> origin/main
 
         return response()->json([
             'message' => 'FAQ berhasil diperbarui',
@@ -42,7 +55,12 @@ class FaqController extends Controller
 
     public function destroy($id)
     {
+<<<<<<< HEAD
+        $faq = Faq::findOrFail($id);
+        $faq->delete();
+=======
         Faq::findOrFail($id)->delete();
+>>>>>>> origin/main
 
         return response()->json([
             'message' => 'FAQ berhasil dihapus'

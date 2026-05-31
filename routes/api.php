@@ -1,9 +1,19 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\FaqController;
 
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::get('/scholarships', [ScholarshipController::class, 'index']);
     Route::get('/scholarships/{id}', [ScholarshipController::class, 'show']);
     Route::post('/scholarships', [ScholarshipController::class, 'store']);
