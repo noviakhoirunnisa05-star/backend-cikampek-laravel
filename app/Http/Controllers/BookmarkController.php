@@ -1,12 +1,14 @@
-<<<<<<< HEAD
 <?php
 
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <?php
 
 =======
 >>>>>>> origin/main
+>>>>>>> main
+=======
 >>>>>>> main
 namespace App\Http\Controllers;
 

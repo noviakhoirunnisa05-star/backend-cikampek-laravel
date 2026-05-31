@@ -1,12 +1,14 @@
-<<<<<<< HEAD
 <?php
 
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <?php
 
 =======
 >>>>>>> origin/main
+>>>>>>> main
+=======
 >>>>>>> main
 namespace App\Http\Controllers;
 
@@ -22,10 +24,10 @@ class ArticleController extends Controller
 
     public function show($id)
     {
-<<<<<<< HEAD
         $article = Article::findOrFail($id);
 
         return response()->json($article);
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
         $article = Article::findOrFail($id);
@@ -34,6 +36,8 @@ class ArticleController extends Controller
 =======
         return response()->json(Article::findOrFail($id));
 >>>>>>> origin/main
+>>>>>>> main
+=======
 >>>>>>> main
     }
 
@@ -61,8 +65,11 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
+>>>>>>> main
+=======
 >>>>>>> main
 
         $article->update([
@@ -71,10 +78,13 @@ class ArticleController extends Controller
             'gambar' => $request->gambar,
         ]);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
         $article->update($request->all());
 >>>>>>> origin/main
+>>>>>>> main
+=======
 >>>>>>> main
 
         return response()->json([
@@ -85,9 +95,9 @@ class ArticleController extends Controller
 
     public function destroy($id)
     {
-<<<<<<< HEAD
         $article = Article::findOrFail($id);
         $article->delete();
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
         $article = Article::findOrFail($id);
@@ -95,6 +105,8 @@ class ArticleController extends Controller
 =======
         Article::findOrFail($id)->delete();
 >>>>>>> origin/main
+>>>>>>> main
+=======
 >>>>>>> main
 
         return response()->json([
