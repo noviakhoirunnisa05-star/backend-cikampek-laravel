@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Scholarship;
+=======
+>>>>>>> origin/main
 use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {
+<<<<<<< HEAD
     public function index(Request $request)
     {
         $query = Scholarship::with('educationLevel');
@@ -83,3 +87,7 @@ class ScholarshipController extends Controller
         ]);
     }
 }
+=======
+    //
+}
+>>>>>>> origin/main
