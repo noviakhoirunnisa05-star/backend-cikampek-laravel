@@ -11,84 +11,141 @@ class ScholarshipController extends Controller
     {
         $query = Scholarship::query();
 
-        if ($request->search) {
-            $query->where('nama_beasiswa', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->semester) {
-            $query->where('semester_min', '<=', $request->semester)
-                  ->where('semester_max', '>=', $request->semester);
+        if ($request->filled('jenjang')) {
+            $query->where('jenjang', $request->jenjang);
         }
 
-        if ($request->id_level) {
-            $query->where('id_level', $request->id_level);
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
         }
 
-        return response()->json($query->get());
+        if ($request->filled('id_major')) {
+            $query->where('id_major', $request->id_major);
+        }
+
+        $scholarships = $query->latest()->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar beasiswa berhasil diambil',
+            'data' => $scholarships,
+        ], 200);
     }
 
     public function show($id)
     {
-        $scholarship = Scholarship::findOrFail($id);
+        $scholarship = Scholarship::find($id);
 
-        return response()->json($scholarship);
+        if (!$scholarship) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Beasiswa tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail beasiswa berhasil diambil',
+            'data' => $scholarship,
+        ], 200);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'id_level' => 'required',
-            'nama_beasiswa' => 'required',
-            'penyelenggara' => 'required',
-            'deskripsi' => 'required',
-            'persyaratan' => 'required',
-            'deadline' => 'required|date',
-            'status' => 'required',
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'provider' => 'nullable|string|max:255',
+            'jenjang' => 'nullable|string|max:100',
+            'semester' => 'nullable|integer',
+            'id_major' => 'nullable|integer',
+            'deadline' => 'nullable|date',
+            'link' => 'nullable|string|max:255',
+            'image' => 'nullable|string|max:255',
         ]);
 
-        $data['id_admin'] = $request->user()->id_user;
-        $data['semester_min'] = $request->semester_min;
-        $data['semester_max'] = $request->semester_max;
-        $data['link_pendaftaran'] = $request->link_pendaftaran;
-
-        $scholarship = Scholarship::create($data);
+        $scholarship = Scholarship::create($request->only([
+            'title',
+            'description',
+            'provider',
+            'jenjang',
+            'semester',
+            'id_major',
+            'deadline',
+            'link',
+            'image',
+        ]));
 
         return response()->json([
+            'success' => true,
             'message' => 'Beasiswa berhasil ditambahkan',
-            'data' => $scholarship
+            'data' => $scholarship,
         ], 201);
     }
 
     public function update(Request $request, $id)
     {
-        $scholarship = Scholarship::findOrFail($id);
+        $scholarship = Scholarship::find($id);
 
-        $scholarship->update([
-            'id_level' => $request->id_level,
-            'nama_beasiswa' => $request->nama_beasiswa,
-            'penyelenggara' => $request->penyelenggara,
-            'deskripsi' => $request->deskripsi,
-            'persyaratan' => $request->persyaratan,
-            'semester_min' => $request->semester_min,
-            'semester_max' => $request->semester_max,
-            'deadline' => $request->deadline,
-            'link_pendaftaran' => $request->link_pendaftaran,
-            'status' => $request->status,
+        if (!$scholarship) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Beasiswa tidak ditemukan',
+            ], 404);
+        }
+
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'provider' => 'nullable|string|max:255',
+            'jenjang' => 'nullable|string|max:100',
+            'semester' => 'nullable|integer',
+            'id_major' => 'nullable|integer',
+            'deadline' => 'nullable|date',
+            'link' => 'nullable|string|max:255',
+            'image' => 'nullable|string|max:255',
         ]);
+
+        $scholarship->update($request->only([
+            'title',
+            'description',
+            'provider',
+            'jenjang',
+            'semester',
+            'id_major',
+            'deadline',
+            'link',
+            'image',
+        ]));
 
         return response()->json([
+            'success' => true,
             'message' => 'Beasiswa berhasil diperbarui',
-            'data' => $scholarship
-        ]);
+            'data' => $scholarship,
+        ], 200);
     }
 
     public function destroy($id)
     {
-        $scholarship = Scholarship::findOrFail($id);
+        $scholarship = Scholarship::find($id);
+
+        if (!$scholarship) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Beasiswa tidak ditemukan',
+            ], 404);
+        }
+
         $scholarship->delete();
 
         return response()->json([
-            'message' => 'Beasiswa berhasil dihapus'
-        ]);
+            'success' => true,
+            'message' => 'Beasiswa berhasil dihapus',
+        ], 200);
     }
 }
