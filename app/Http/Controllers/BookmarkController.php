@@ -13,18 +13,21 @@ class BookmarkController extends Controller
             ->where('id_user', $request->user()->id_user)
             ->get();
 
-        return response()->json($bookmarks);
+        return response()->json([
+            'message' => 'Data bookmark berhasil diambil',
+            'data' => $bookmarks
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'id_scholarship' => 'required'
+        $data = $request->validate([
+            'id_scholarship' => 'required|exists:scholarships,id_scholarship',
         ]);
 
         $bookmark = Bookmark::firstOrCreate([
             'id_user' => $request->user()->id_user,
-            'id_scholarship' => $request->id_scholarship,
+            'id_scholarship' => $data['id_scholarship'],
         ]);
 
         return response()->json([
@@ -35,9 +38,11 @@ class BookmarkController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        Bookmark::where('id_bookmark', $id)
-            ->where('id_user', $request->user()->id_user)
-            ->delete();
+        $bookmark = Bookmark::where('id_user', $request->user()->id_user)
+            ->where('id_bookmark', $id)
+            ->firstOrFail();
+
+        $bookmark->delete();
 
         return response()->json([
             'message' => 'Bookmark berhasil dihapus'

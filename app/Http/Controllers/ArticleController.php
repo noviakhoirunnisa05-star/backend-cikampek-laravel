@@ -9,29 +9,35 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        return response()->json(Article::latest()->get());
+        $articles = Article::with('admin')->get();
+
+        return response()->json([
+            'message' => 'Data artikel berhasil diambil',
+            'data' => $articles
+        ]);
     }
 
     public function show($id)
     {
-        $article = Article::findOrFail($id);
+        $article = Article::with('admin')->findOrFail($id);
 
-        return response()->json($article);
+        return response()->json([
+            'message' => 'Detail artikel berhasil diambil',
+            'data' => $article
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'judul' => 'required',
-            'isi_artikel' => 'required',
+        $data = $request->validate([
+            'judul' => 'required|string|max:255',
+            'isi_artikel' => 'required|string',
+            'gambar' => 'nullable|string',
         ]);
 
-        $article = Article::create([
-            'id_admin' => $request->user()->id_user,
-            'judul' => $request->judul,
-            'isi_artikel' => $request->isi_artikel,
-            'gambar' => $request->gambar,
-        ]);
+        $data['id_admin'] = $request->user()->id_user;
+
+        $article = Article::create($data);
 
         return response()->json([
             'message' => 'Artikel berhasil ditambahkan',
@@ -43,14 +49,16 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
 
-        $article->update([
-            'judul' => $request->judul,
-            'isi_artikel' => $request->isi_artikel,
-            'gambar' => $request->gambar,
+        $data = $request->validate([
+            'judul' => 'required|string|max:255',
+            'isi_artikel' => 'required|string',
+            'gambar' => 'nullable|string',
         ]);
 
+        $article->update($data);
+
         return response()->json([
-            'message' => 'Artikel berhasil diperbarui',
+            'message' => 'Artikel berhasil diupdate',
             'data' => $article
         ]);
     }
