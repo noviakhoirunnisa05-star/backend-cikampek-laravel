@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class InitialDataSeeder extends Seeder
 {
@@ -30,6 +31,19 @@ class InitialDataSeeder extends Seeder
             ['nama_major' => 'Sistem Informasi'],
             ['nama_major' => 'Pendidikan Guru Sekolah Dasar'],
             ['nama_major' => 'Hukum'],
+        ]);
+
+        DB::table('users')->insert([
+            [
+                'id_role' => 1,
+                'id_major' => 1,
+                'nama_lengkap' => 'User Test',
+                'email' => 'user@test.com',
+                'password' => Hash::make('password123'),
+                'semester' => 4,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

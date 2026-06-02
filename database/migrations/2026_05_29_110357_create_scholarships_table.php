@@ -6,20 +6,38 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('scholarships', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_scholarship');
+
+            $table->unsignedBigInteger('id_admin');
+            $table->unsignedBigInteger('id_level');
+
+            $table->string('nama_beasiswa');
+            $table->string('penyelenggara');
+            $table->text('deskripsi');
+            $table->text('persyaratan');
+            $table->integer('semester_min');
+            $table->integer('semester_max');
+            $table->date('deadline');
+            $table->string('link_pendaftaran');
+            $table->string('status')->default('aktif');
+
             $table->timestamps();
+
+            $table->foreign('id_admin')
+                ->references('id_user')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('id_level')
+                ->references('id_level')
+                ->on('education_levels')
+                ->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('scholarships');

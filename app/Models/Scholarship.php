@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,5 +28,10 @@ class Scholarship extends Model
     public function educationLevel()
     {
         return $this->belongsTo(EducationLevel::class, 'id_level', 'id_level');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'id_admin', 'id_user');
     }
 }

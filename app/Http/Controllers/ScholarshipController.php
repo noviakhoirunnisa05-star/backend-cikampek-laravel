@@ -9,10 +9,12 @@ class ScholarshipController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Scholarship::query();
+        $query = Scholarship::with(['educationLevel', 'admin']);
 
         if ($request->search) {
-            $query->where('nama_beasiswa', 'like', '%' . $request->search . '%');
+            $query->where('nama_beasiswa', 'like', '%' . $request->search . '%')
+                  ->orWhere('penyelenggara', 'like', '%' . $request->search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
         }
 
         if ($request->semester) {
@@ -24,32 +26,39 @@ class ScholarshipController extends Controller
             $query->where('id_level', $request->id_level);
         }
 
-        return response()->json($query->get());
+        return response()->json([
+            'message' => 'Data beasiswa berhasil diambil',
+            'data' => $query->get()
+        ]);
     }
 
     public function show($id)
     {
-        $scholarship = Scholarship::findOrFail($id);
+        $scholarship = Scholarship::with(['educationLevel', 'admin'])
+            ->findOrFail($id);
 
-        return response()->json($scholarship);
+        return response()->json([
+            'message' => 'Detail beasiswa berhasil diambil',
+            'data' => $scholarship
+        ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'id_level' => 'required',
-            'nama_beasiswa' => 'required',
-            'penyelenggara' => 'required',
-            'deskripsi' => 'required',
-            'persyaratan' => 'required',
+            'id_level' => 'required|exists:education_levels,id_level',
+            'nama_beasiswa' => 'required|string|max:255',
+            'penyelenggara' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'persyaratan' => 'required|string',
+            'semester_min' => 'required|integer',
+            'semester_max' => 'required|integer',
             'deadline' => 'required|date',
-            'status' => 'required',
+            'link_pendaftaran' => 'required|string',
+            'status' => 'required|string',
         ]);
 
         $data['id_admin'] = $request->user()->id_user;
-        $data['semester_min'] = $request->semester_min;
-        $data['semester_max'] = $request->semester_max;
-        $data['link_pendaftaran'] = $request->link_pendaftaran;
 
         $scholarship = Scholarship::create($data);
 
@@ -63,21 +72,23 @@ class ScholarshipController extends Controller
     {
         $scholarship = Scholarship::findOrFail($id);
 
-        $scholarship->update([
-            'id_level' => $request->id_level,
-            'nama_beasiswa' => $request->nama_beasiswa,
-            'penyelenggara' => $request->penyelenggara,
-            'deskripsi' => $request->deskripsi,
-            'persyaratan' => $request->persyaratan,
-            'semester_min' => $request->semester_min,
-            'semester_max' => $request->semester_max,
-            'deadline' => $request->deadline,
-            'link_pendaftaran' => $request->link_pendaftaran,
-            'status' => $request->status,
+        $data = $request->validate([
+            'id_level' => 'required|exists:education_levels,id_level',
+            'nama_beasiswa' => 'required|string|max:255',
+            'penyelenggara' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'persyaratan' => 'required|string',
+            'semester_min' => 'required|integer',
+            'semester_max' => 'required|integer',
+            'deadline' => 'required|date',
+            'link_pendaftaran' => 'required|string',
+            'status' => 'required|string',
         ]);
 
+        $scholarship->update($data);
+
         return response()->json([
-            'message' => 'Beasiswa berhasil diperbarui',
+            'message' => 'Beasiswa berhasil diupdate',
             'data' => $scholarship
         ]);
     }
