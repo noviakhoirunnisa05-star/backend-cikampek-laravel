@@ -10,23 +10,26 @@ use App\Http\Controllers\FaqController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// PUBLIC - bisa diakses tanpa login
+Route::get('/scholarships', [ScholarshipController::class, 'index']);
+Route::get('/scholarships/{id}', [ScholarshipController::class, 'show']);
+
+Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/{id}', [ArticleController::class, 'show']);
+
+Route::get('/faqs', [FaqController::class, 'index']);
+
+// USER LOGIN - harus login
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/scholarships', [ScholarshipController::class, 'index']);
-    Route::get('/scholarships/{id}', [ScholarshipController::class, 'show']);
-
     Route::get('/bookmarks', [BookmarkController::class, 'index']);
     Route::post('/bookmarks', [BookmarkController::class, 'store']);
     Route::delete('/bookmarks/{id}', [BookmarkController::class, 'destroy']);
-
-    Route::get('/articles', [ArticleController::class, 'index']);
-    Route::get('/articles/{id}', [ArticleController::class, 'show']);
-
-    Route::get('/faqs', [FaqController::class, 'index']);
 });
 
+// ADMIN - harus login dan admin
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/scholarships', [ScholarshipController::class, 'store']);
     Route::put('/scholarships/{id}', [ScholarshipController::class, 'update']);

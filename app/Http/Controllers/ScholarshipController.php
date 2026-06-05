@@ -8,29 +8,43 @@ use Illuminate\Http\Request;
 class ScholarshipController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Scholarship::with(['educationLevel', 'admin']);
+{
+    $query = Scholarship::with(['educationLevel', 'admin']);
 
-        if ($request->search) {
-            $query->where('nama_beasiswa', 'like', '%' . $request->search . '%')
-                  ->orWhere('penyelenggara', 'like', '%' . $request->search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->semester) {
-            $query->where('semester_min', '<=', $request->semester)
-                  ->where('semester_max', '>=', $request->semester);
-        }
-
-        if ($request->id_level) {
-            $query->where('id_level', $request->id_level);
-        }
-
-        return response()->json([
-            'message' => 'Data beasiswa berhasil diambil',
-            'data' => $query->get()
-        ]);
+    if ($request->filled('search')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('nama_beasiswa', 'like', '%' . $request->search . '%')
+              ->orWhere('penyelenggara', 'like', '%' . $request->search . '%')
+              ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
+        });
     }
+
+    if ($request->filled('kategori_jurusan')) {
+        $query->where('kategori_jurusan', $request->kategori_jurusan);
+    }
+
+    if ($request->filled('jenjang')) {
+        $query->whereHas('educationLevel', function ($q) use ($request) {
+            $q->where('nama_level', $request->jenjang);
+        });
+    }
+
+    if ($request->filled('semester')) {
+        $semester = (int) $request->semester;
+
+        $query->where('semester_min', '<=', $semester)
+              ->where('semester_max', '>=', $semester);
+    }
+
+    if ($request->filled('id_level')) {
+        $query->where('id_level', $request->id_level);
+    }
+
+    return response()->json([
+        'message' => 'Data beasiswa berhasil diambil',
+        'data' => $query->get()
+    ]);
+}
 
     public function show($id)
     {
